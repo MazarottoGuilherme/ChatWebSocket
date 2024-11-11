@@ -5,30 +5,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        #chats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            /* Espaçamento entre os chats */
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .chat-link {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .chat-link:hover {
+            background-color: #ddd;
+            color: #000;
+        }
+    </style>
 </head>
 
 <body>
     <!-- lista de todos os chats que o usuario tem -->
-    <ul id="ListChats"></ul>
+    <!-- <ul id="ListChats"></ul> -->
+     <div id="content" style="display: none;">
+        <div id="chats"></div>
+     </div>
+    
 
     <script src="http://localhost:5000/socket.io/socket.io.js"></script>
     <script>
+        const content = document.getElementById('content');
         const loadChats = async () => {
             const socket = io('http://localhost:5000/chats', {
                 withCredentials: true
             });
 
             socket.on('LoadAllChats', (listChats) => {
-                const UlChats = document.getElementById('ListChats');
-
-                UlChats.innerHTML = '';
-
+                // const UlChats = document.getElementById('ListChats');
+                const Chats = document.getElementById('chats');
+                Chats.innerHTML = '';
                 listChats.forEach(chat => {
-                    const item = document.createElement('li');
-                    item.textContent = chat.name;
-                    item.id = chat.id
-                    UlChats.append(item);
+                    const ItemChat = document.createElement('a');
+                    ItemChat.textContent = chat.name;
+                    ItemChat.href = `./chat.html?id=${chat.id}`;
+                    ItemChat.id = chat.id;
+                    ItemChat.className = 'chat-link';
+                    Chats.append(ItemChat);
+
+
+                    // const item = document.createElement('li');
+                    // item.textContent = chat.name;
+                    // item.id = chat.id
+                    // UlChats.append(item);
                 });
+
+                content.style.display = "block";
             });
 
         }

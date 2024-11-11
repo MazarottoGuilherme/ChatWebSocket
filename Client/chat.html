@@ -34,11 +34,14 @@
 </head>
 
 <body>
-    <div id="messages"></div>
-    <form id="formMessages">
-        <input type="text" id="iMensagem" placeholder="Type your message" />
-        <button>Send</button>
-    </form>
+    <div id="content" style="display: none;">
+        <div id="messages"></div>
+        <form id="formMessages">
+            <input type="text" id="iMensagem" placeholder="Type your message" />
+            <button>Send</button>
+        </form>
+    </div>
+
 
     <script src="http://localhost:5000/socket.io/socket.io.js"></script>
     <script>
@@ -52,6 +55,8 @@
             query: { chatId: chatId },
             withCredentials: true,
         });
+
+        const content = document.getElementById('content');
 
         socket.on('AccessDenied', () => {
             window.location.href = './contatos.html';
@@ -69,6 +74,7 @@
                 messageDiv.id = chat.id;
                 messages.appendChild(messageDiv);
             });
+            content.style.display = "block";
             window.scrollTo(0, document.body.scrollHeight);
         })
 
@@ -85,13 +91,17 @@
             console.log(mensagem)
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('mensagem');
-            messageDiv.classList.add(mensagem.IsUser ? 'mensagem-direita': 'mensagem-esquerda');
+            messageDiv.classList.add(mensagem.IsUser ? 'mensagem-direita' : 'mensagem-esquerda');
             messageDiv.textContent = mensagem.Mensagem;
             messageDiv.id = mensagem.id;
             messages.appendChild(messageDiv);
             window.scrollTo(0, document.body.scrollHeight);
 
         })
+
+        socket.on('AccessDenied', () => {
+            window.location.href = './contatos.html'
+        });
 
     </script>
 </body>
