@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #messages {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .mensagem {
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            color: white;
+        }
+
+        .mensagem-direita {
+            align-self: flex-end;
+            background-color: #007bff;
+        }
+
+        .mensagem-esquerda {
+            align-self: flex-start;
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="messages"></div>
+    <form id="formMessages">
+        <input type="text" id="iMensagem" placeholder="Type your message" />
+        <button>Send</button>
+    </form>
+
+    <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const chatId = params.get('id');
+        if (!chatId) {
+            window.location.href = './contatos.html'
+        }
+
+        const socket = io(`http://localhost:5000/mensagens`, {
+            query: { chatId: chatId },
+            withCredentials: true,
+        });
+
+        socket.on('AccessDenied', () => {
+            window.location.href = './contatos.html';
+        })
+
+        const messages = document.getElementById('messages');
+
+        socket.on('LoadMensagens', (Mensagens) => {
+            messages.innerHTML = '';
+            Mensagens.forEach(chat => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('mensagem');
+                messageDiv.classList.add(chat.isUser ? 'mensagem-direita' : 'mensagem-esquerda');
+                messageDiv.textContent = chat.content;
+                messageDiv.id = chat.id;
+                messages.appendChild(messageDiv);
+            });
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+
+        const form = document.getElementById("formMessages");
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const SendMessage = document.getElementById('iMensagem');
+            socket.emit('SendMessage', SendMessage.value)
+            SendMessage.value = '';
+        })
+
+        socket.on('SendMessage', (mensagem) => {
+            console.log(mensagem)
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('mensagem');
+            messageDiv.classList.add(mensagem.IsUser ? 'mensagem-direita': 'mensagem-esquerda');
+            messageDiv.textContent = mensagem.Mensagem;
+            messageDiv.id = mensagem.id;
+            messages.appendChild(messageDiv);
+            window.scrollTo(0, document.body.scrollHeight);
+
+        })
+
+    </script>
+</body>
+
+</html>

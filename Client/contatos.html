@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- lista de todos os chats que o usuario tem -->
+    <ul id="ListChats"></ul>
+
+    <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+    <script>
+        const loadChats = async () => {
+            const socket = io('http://localhost:5000/chats', {
+                withCredentials: true
+            });
+
+            socket.on('LoadAllChats', (listChats) => {
+                const UlChats = document.getElementById('ListChats');
+
+                UlChats.innerHTML = '';
+
+                listChats.forEach(chat => {
+                    const item = document.createElement('li');
+                    item.textContent = chat.name;
+                    item.id = chat.id
+                    UlChats.append(item);
+                });
+            });
+
+        }
+        loadChats();
+
+
+    </script>
+</body>
+
+</html>

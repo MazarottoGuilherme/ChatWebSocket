@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="loginForm">
+        <input type="text" placeholder="Type your user name" id="iUser"/>
+        <input type="password" placeholder="Type your password" id="iPass"/>
+        <button type="submit">Login</button>
+    </form>
+    <a href="./cadastro.html">cadastro</a>
+    <script>
+        var form = document.getElementById("loginForm");
+        form.addEventListener("submit", async (e)=>{
+            e.preventDefault();
+            const user = document.getElementById('iUser').value;
+            const pass = document.getElementById('iPass').value;
+            try{
+                const resp = await fetch('http://localhost:5000/api/auth/login',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user, pass}),
+                    credentials: 'include'
+                })
+
+                if(resp.ok){
+                    const data = await resp.json();
+                    window.location.href = './contatos.html'
+                }
+                console.log(data.status == "success")
+            }catch(e){
+                console.log(e)
+            }
+        })
+    </script>
+</body>
+</html>

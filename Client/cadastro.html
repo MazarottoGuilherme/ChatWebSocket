@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="formCadastro">
+        <input type="text" id="Username" placeholder="Username" />
+        <input type="email" id="email" placeholder="email" />
+        <input type="password" id="senha" placeholder="password" />
+        <button>Cadastrar</button>
+    </form>
+    <script>
+        const form = document.getElementById('formCadastro');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('Username').value;
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('senha').value;
+
+            const resp = await fetch('http://localhost:5000/api/auth/cadastro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, user, pass }),
+                credentials: 'include'
+            })
+
+            if(resp.ok){
+                window.location.href = './contatos.html';
+            }
+        })
+    </script>
+</body>
+
+</html>
